@@ -1,0 +1,2 @@
+# CodeScanner
+Skaner kodów kreskowych
