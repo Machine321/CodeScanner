@@ -5,8 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Skaner"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="555.11" Loaded="Window_Loaded">
     <Grid>
-        
+        <TextBox x:Name="CodeTextBox" HorizontalAlignment="Left" Height="59" Margin="297,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="237" KeyUp="CodeTextBox_KeyUp" TextChanged="CodeTextBox_TextChanged" AcceptsReturn="False" FontFamily="Consolas" FontSize="48" FontWeight="Bold"/>
+        <Button x:Name="SaveButton" Content="ZAPISZ" HorizontalAlignment="Left" Margin="297,69,0,0" VerticalAlignment="Top" Width="237" Height="66" Click="SaveButton_Click"/>
+        <DataGrid ItemsSource="{Binding}" AutoGenerateColumns="False" x:Name="CodesDataGrid" HorizontalAlignment="Left" Height="400" Margin="10,10,0,0" VerticalAlignment="Top" Width="287">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Kod" Binding="{Binding CodeString}" Width="100"/>
+                <DataGridTextColumn Header="Data" Binding="{Binding Date}" Width="100" />
+                <DataGridTemplateColumn Header="Delete">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Delete"
+                            Command="Delete"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
     </Grid>
 </Window>
