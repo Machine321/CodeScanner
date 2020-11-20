@@ -1,6 +1,9 @@
-﻿using System;
+﻿using CsvHelper;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,10 +27,12 @@ namespace Skaner
     public partial class MainWindow : Window
     {
         ObservableCollection<Code> codesList;
+        String dbPath;
 
         public MainWindow()
         {
             codesList = new ObservableCollection<Code>();
+
             InitializeComponent();
         }
 
@@ -44,9 +49,12 @@ namespace Skaner
             e.Handled = true;
             codesList.Add(new Code {
                 CodeString = CodeTextBox.Text,
-                Date = DateTime.Now.Date
+                Date = DateTime.Today
             });
             CodeTextBox.Text = "";
+            //CodesDataGrid.SelectedIndex = CodesDataGrid.Items.Count - 1;
+            CodesDataGrid.ScrollIntoView(codesList[codesList.Count - 1]);
+            CodesDataGrid.SelectedItem = CodesDataGrid.Items[CodesDataGrid.Items.Count - 1];
         }
 
         private void CodeTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -55,13 +63,55 @@ namespace Skaner
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            //codesList.Add(new Code
-            //{
-            //    CodeString = CodeTextBox.Text,
-            //    Date = DateTime.Now.Date
-            //});
-            //CodeTextBox.Text = "";
-            Console.WriteLine(codesList.Count);
+            codesList.Add(new Code
+            {
+                CodeString = CodeTextBox.Text,
+                Date = DateTime.Now.Date
+            });
+            CodeTextBox.Text = "";
+            //CodesDataGrid.SelectedIndex = CodesDataGrid.Items.Count - 1;
+            CodesDataGrid.ScrollIntoView(codesList[codesList.Count - 1]);
+            CodesDataGrid.SelectedItem = CodesDataGrid.Items[CodesDataGrid.Items.Count - 1];
+        }
+
+        private void SaveDbButton_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.DefaultExt = ".csv";
+            dlg.Filter = "CSV Files (*.csv)|*.csv";
+
+            Nullable<bool> result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                dbPath = dlg.FileName;
+                using (var reader = new StreamReader(dbPath))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    var records = csv.GetRecords<Code>();
+                    codesList.Clear();
+                    foreach(Code item in records)
+                        codesList.Add(new Code
+                        {
+                            CodeString = item.CodeString,
+                            Date = item.Date
+                        });
+                }
+            }
+        }
+
+        private void WriteDbButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (dbPath != null)
+            {
+                using (var writer = new StreamWriter(dbPath))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.WriteRecords(codesList);
+                }
+            }
+            else
+                MessageBox.Show("Brak wskazanego pliku bazy!", "UWAGA!");
         }
     }
 }

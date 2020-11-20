@@ -9,20 +9,22 @@
     <Grid>
         <TextBox x:Name="CodeTextBox" HorizontalAlignment="Left" Height="59" Margin="297,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="237" KeyUp="CodeTextBox_KeyUp" TextChanged="CodeTextBox_TextChanged" AcceptsReturn="False" FontFamily="Consolas" FontSize="48" FontWeight="Bold"/>
         <Button x:Name="SaveButton" Content="ZAPISZ" HorizontalAlignment="Left" Margin="297,69,0,0" VerticalAlignment="Top" Width="237" Height="66" Click="SaveButton_Click"/>
-        <DataGrid ItemsSource="{Binding}" AutoGenerateColumns="False" x:Name="CodesDataGrid" HorizontalAlignment="Left" Height="400" Margin="10,10,0,0" VerticalAlignment="Top" Width="287">
+        <DataGrid CanUserAddRows="False" ItemsSource="{Binding}" AutoGenerateColumns="False" x:Name="CodesDataGrid" HorizontalAlignment="Left" Height="400" Margin="10,10,0,0" VerticalAlignment="Top" Width="287">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Kod" Binding="{Binding CodeString}" Width="100"/>
-                <DataGridTextColumn Header="Data" Binding="{Binding Date}" Width="100" />
-                <DataGridTemplateColumn Header="Delete">
+                <DataGridTextColumn Header="Kod" IsReadOnly="True" Binding="{Binding CodeString}" Width="*"/>
+                <DataGridTextColumn Header="Data" IsReadOnly="True" Binding="{Binding Date}" Width="*" />
+                <DataGridTemplateColumn Header="Akcja">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Delete"
+                            <Button Content="Usuń"
                             Command="Delete"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+        <Button x:Name="SaveDbButton" Content="Wczytaj dane" HorizontalAlignment="Left" Height="44" Margin="302,312,0,0" VerticalAlignment="Top" Width="232" Click="SaveDbButton_Click"/>
+        <Button x:Name="WriteDbButton" Content="Zapisz dane" HorizontalAlignment="Left" Height="44" Margin="302,366,0,0" VerticalAlignment="Top" Width="232" Click="WriteDbButton_Click"/>
 
     </Grid>
 </Window>
