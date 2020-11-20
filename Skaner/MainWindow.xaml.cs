@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,19 +28,32 @@ namespace Skaner
     public partial class MainWindow : Window
     {
         ObservableCollection<Code> codesList;
+        ListCollectionView collectionView;
         String dbPath;
 
         public MainWindow()
         {
             codesList = new ObservableCollection<Code>();
-
+            collectionView = new ListCollectionView(codesList);
             InitializeComponent();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            CodesDataGrid.DataContext = codesList;
+            CodesDataGrid.DataContext = collectionView;
             CodeTextBox.Focus();
+            DateToFilter.SelectedDateChanged += this.DateToFilter_SelectedDateChanged;
+        }
+
+        private void DateToFilter_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            collectionView.Filter = (el) =>
+            {
+                Code emp = el as Code;
+                if (emp.Date == DateToFilter.SelectedDate)
+                    return true;
+                return false;
+            };
         }
 
         private void CodeTextBox_KeyUp(object sender, KeyEventArgs e)
@@ -52,7 +66,8 @@ namespace Skaner
                 Date = DateTime.Today
             });
             CodeTextBox.Text = "";
-            //CodesDataGrid.SelectedIndex = CodesDataGrid.Items.Count - 1;
+
+            collectionView.Filter = null;
             CodesDataGrid.ScrollIntoView(codesList[codesList.Count - 1]);
             CodesDataGrid.SelectedItem = CodesDataGrid.Items[CodesDataGrid.Items.Count - 1];
         }
@@ -69,7 +84,8 @@ namespace Skaner
                 Date = DateTime.Now.Date
             });
             CodeTextBox.Text = "";
-            //CodesDataGrid.SelectedIndex = CodesDataGrid.Items.Count - 1;
+
+            collectionView.Filter = null;
             CodesDataGrid.ScrollIntoView(codesList[codesList.Count - 1]);
             CodesDataGrid.SelectedItem = CodesDataGrid.Items[CodesDataGrid.Items.Count - 1];
         }
@@ -96,6 +112,9 @@ namespace Skaner
                             CodeString = item.CodeString,
                             Date = item.Date
                         });
+                    collectionView.Filter = null;
+                    CodesDataGrid.ScrollIntoView(codesList[codesList.Count - 1]);
+                    CodesDataGrid.SelectedItem = CodesDataGrid.Items[CodesDataGrid.Items.Count - 1];
                 }
             }
         }
@@ -112,6 +131,27 @@ namespace Skaner
             }
             else
                 MessageBox.Show("Brak wskazanego pliku bazy!", "UWAGA!");
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            collectionView.Filter = null;
+            CodesDataGrid.ScrollIntoView(codesList[codesList.Count - 1]);
+            CodesDataGrid.SelectedItem = CodesDataGrid.Items[CodesDataGrid.Items.Count - 1];
+        }
+
+        private void ExportButton_Click(object sender, RoutedEventArgs e)
+        {
+            var sb = new StringBuilder();
+            foreach (Code code in CodesDataGrid.Items)
+            {
+                sb.Append(code.CodeString);
+                sb.AppendLine();
+            }
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            if (saveFileDialog.ShowDialog() == true)
+                File.WriteAllText(saveFileDialog.FileName, sb.ToString());
+
         }
     }
 }

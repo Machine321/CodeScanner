@@ -25,6 +25,10 @@
         </DataGrid>
         <Button x:Name="SaveDbButton" Content="Wczytaj dane" HorizontalAlignment="Left" Height="44" Margin="302,312,0,0" VerticalAlignment="Top" Width="232" Click="SaveDbButton_Click"/>
         <Button x:Name="WriteDbButton" Content="Zapisz dane" HorizontalAlignment="Left" Height="44" Margin="302,366,0,0" VerticalAlignment="Top" Width="232" Click="WriteDbButton_Click"/>
+        <DatePicker x:Name="DateToFilter" HorizontalAlignment="Left" Height="26" Margin="301,148,0,0" VerticalAlignment="Top" Width="111"/>
+        <Button x:Name="ClearFilterButton" Content="Wyczyść" HorizontalAlignment="Left" Height="26
+                " Margin="417,148,0,0" VerticalAlignment="Top" Width="117" Click="Button_Click"/>
+        <Button x:Name="ExportButton" Content="Eksport" HorizontalAlignment="Left" Height="26" Margin="417,179,0,0" VerticalAlignment="Top" Width="117" Click="ExportButton_Click"/>
 
     </Grid>
 </Window>
