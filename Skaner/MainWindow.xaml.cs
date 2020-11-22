@@ -55,6 +55,7 @@ namespace Skaner
                     return true;
                 return false;
             };
+            CodeTextBox.Focus();
         }
 
         private void CodeTextBox_KeyUp(object sender, KeyEventArgs e)
@@ -73,10 +74,6 @@ namespace Skaner
             CodesDataGrid.SelectedItem = CodesDataGrid.Items[CodesDataGrid.Items.Count - 1];
         }
 
-        private void CodeTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-        }
-
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             codesList.Add(new Code
@@ -89,9 +86,11 @@ namespace Skaner
             collectionView.Filter = null;
             CodesDataGrid.ScrollIntoView(codesList[codesList.Count - 1]);
             CodesDataGrid.SelectedItem = CodesDataGrid.Items[CodesDataGrid.Items.Count - 1];
+
+            CodeTextBox.Focus();
         }
 
-        private void SaveDbButton_Click(object sender, RoutedEventArgs e)
+        private void ReadDbButton_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.DefaultExt = ".csv";
@@ -121,6 +120,7 @@ namespace Skaner
                     }
                 }
             }
+            CodeTextBox.Focus();
         }
 
         private void WriteDbButton_Click(object sender, RoutedEventArgs e)
@@ -159,6 +159,7 @@ namespace Skaner
                         break;
                 }
             }
+            CodeTextBox.Focus();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -169,6 +170,7 @@ namespace Skaner
                 CodesDataGrid.ScrollIntoView(codesList[codesList.Count - 1]);
                 CodesDataGrid.SelectedItem = CodesDataGrid.Items[CodesDataGrid.Items.Count - 1];
             }
+            CodeTextBox.Focus();
         }
 
         private void ExportButton_Click(object sender, RoutedEventArgs e)
@@ -184,7 +186,48 @@ namespace Skaner
             saveFileDialog.FileName = "DANE_"+this.DateToFilter.SelectedDate.Value.ToString("ddMMyyyy");
             if (saveFileDialog.ShowDialog() == true)
                 File.WriteAllText(saveFileDialog.FileName, sb.ToString());
+            CodeTextBox.Focus();
+        }
 
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Czy chcesz zapisać bazę?", "UWAGA!", MessageBoxButton.YesNo);
+            switch (result)
+            {
+                case MessageBoxResult.Yes:
+                    SaveFileDialog saveFileDialog = new SaveFileDialog();
+                    saveFileDialog.DefaultExt = "csv";
+                    if (dbPath == null)
+                    {
+                        saveFileDialog.FileName = "BAZA_" + this.DateToFilter.SelectedDate.Value.ToString("ddMMyyyy");
+                        saveFileDialog.Filter = "CSV Files (*.csv)|*.csv";
+                        if (saveFileDialog.ShowDialog() == true)
+                        {
+                            File.WriteAllText(saveFileDialog.FileName, "");
+                            dbPath = saveFileDialog.FileName;
+
+                            using (var writer = new StreamWriter(dbPath))
+                            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                            {
+                                collectionView.Filter = null;
+                                csv.WriteRecords(codesList);
+                            }
+                        }
+                    } else
+                    {
+                        File.WriteAllText(dbPath, "");
+
+                        using (var writer = new StreamWriter(dbPath))
+                        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                        {
+                            collectionView.Filter = null;
+                            csv.WriteRecords(codesList);
+                        }
+                    }
+                    break;
+                case MessageBoxResult.No:
+                    break;
+            }
         }
     }
 }

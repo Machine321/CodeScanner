@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Skaner"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="555.11" Loaded="Window_Loaded">
+        Title="Skaner kodów" Height="470.902" Width="555.11" Loaded="Window_Loaded" Closing="Window_Closing" ResizeMode="NoResize">
     <Grid>
-        <TextBox x:Name="CodeTextBox" HorizontalAlignment="Left" Height="59" Margin="297,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="237" KeyUp="CodeTextBox_KeyUp" TextChanged="CodeTextBox_TextChanged" AcceptsReturn="False" FontFamily="Consolas" FontSize="48" FontWeight="Bold"/>
+        <TextBox x:Name="CodeTextBox" HorizontalAlignment="Left" Height="59" Margin="297,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="237" KeyUp="CodeTextBox_KeyUp" AcceptsReturn="False" FontFamily="Consolas" FontSize="48" FontWeight="Bold"/>
         <Button x:Name="SaveButton" Content="ZAPISZ" HorizontalAlignment="Left" Margin="297,69,0,0" VerticalAlignment="Top" Width="237" Height="66" Click="SaveButton_Click"/>
         <DataGrid CanUserAddRows="False" ItemsSource="{Binding}" AutoGenerateColumns="False" x:Name="CodesDataGrid" HorizontalAlignment="Left" Height="400" Margin="10,10,0,0" VerticalAlignment="Top" Width="287">
             <DataGrid.Columns>
@@ -23,12 +23,17 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="SaveDbButton" Content="Wczytaj dane" HorizontalAlignment="Left" Height="44" Margin="302,312,0,0" VerticalAlignment="Top" Width="232" Click="SaveDbButton_Click"/>
+        <Button x:Name="SaveDbButton" Content="Wczytaj dane" HorizontalAlignment="Left" Height="44" Margin="302,312,0,0" VerticalAlignment="Top" Width="232" Click="ReadDbButton_Click"/>
         <Button x:Name="WriteDbButton" Content="Zapisz dane" HorizontalAlignment="Left" Height="44" Margin="302,366,0,0" VerticalAlignment="Top" Width="232" Click="WriteDbButton_Click"/>
         <DatePicker x:Name="DateToFilter" HorizontalAlignment="Left" Height="26" Margin="301,148,0,0" VerticalAlignment="Top" Width="111"/>
         <Button x:Name="ClearFilterButton" Content="Wyczyść" HorizontalAlignment="Left" Height="26
                 " Margin="417,148,0,0" VerticalAlignment="Top" Width="117" Click="Button_Click"/>
         <Button x:Name="ExportButton" Content="Eksport" HorizontalAlignment="Left" Height="26" Margin="417,179,0,0" VerticalAlignment="Top" Width="117" Click="ExportButton_Click"/>
+        <StatusBar HorizontalAlignment="Left" Height="27" Margin="0,415,0,0" VerticalAlignment="Top" Width="549">
+            <StatusBarItem Grid.Column="1">
+                <TextBlock Text="Data kompilacji: 2020.11.22" />
+            </StatusBarItem>
+        </StatusBar>
 
     </Grid>
 </Window>
