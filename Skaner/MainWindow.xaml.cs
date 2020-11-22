@@ -42,6 +42,7 @@ namespace Skaner
         {
             CodesDataGrid.DataContext = collectionView;
             CodeTextBox.Focus();
+            DateToFilter.SelectedDate = DateTime.Today;
             DateToFilter.SelectedDateChanged += this.DateToFilter_SelectedDateChanged;
         }
 
@@ -113,8 +114,11 @@ namespace Skaner
                             Date = item.Date
                         });
                     collectionView.Filter = null;
-                    CodesDataGrid.ScrollIntoView(codesList[codesList.Count - 1]);
-                    CodesDataGrid.SelectedItem = CodesDataGrid.Items[CodesDataGrid.Items.Count - 1];
+                    if (codesList.Count > 0)
+                    {
+                        CodesDataGrid.ScrollIntoView(codesList[codesList.Count - 1]);
+                        CodesDataGrid.SelectedItem = CodesDataGrid.Items[CodesDataGrid.Items.Count - 1];
+                    }
                 }
             }
         }
@@ -129,15 +133,42 @@ namespace Skaner
                     csv.WriteRecords(codesList);
                 }
             }
-            else
-                MessageBox.Show("Brak wskazanego pliku bazy!", "UWAGA!");
+            else {
+                MessageBoxResult result = MessageBox.Show("Nie wczytano pliku bazy. Czy zapisać obecne rekordy do nowego pliku?", "UWAGA!", MessageBoxButton.YesNo);
+                switch (result)
+                {
+                    case MessageBoxResult.Yes:
+                        SaveFileDialog saveFileDialog = new SaveFileDialog();
+                        saveFileDialog.DefaultExt = "csv";
+                        saveFileDialog.FileName = "BAZA_" + this.DateToFilter.SelectedDate.Value.ToString("ddMMyyyy");
+                        saveFileDialog.Filter = "CSV Files (*.csv)|*.csv";
+                        if (saveFileDialog.ShowDialog() == true)
+                        {
+                            File.WriteAllText(saveFileDialog.FileName, "");
+                            dbPath = saveFileDialog.FileName;
+
+                            using (var writer = new StreamWriter(dbPath))
+                            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                            {
+                                collectionView.Filter = null;
+                                csv.WriteRecords(codesList);
+                            }
+                        }
+                        break;
+                    case MessageBoxResult.No:
+                        break;
+                }
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             collectionView.Filter = null;
-            CodesDataGrid.ScrollIntoView(codesList[codesList.Count - 1]);
-            CodesDataGrid.SelectedItem = CodesDataGrid.Items[CodesDataGrid.Items.Count - 1];
+            if (codesList.Count > 0)
+            {
+                CodesDataGrid.ScrollIntoView(codesList[codesList.Count - 1]);
+                CodesDataGrid.SelectedItem = CodesDataGrid.Items[CodesDataGrid.Items.Count - 1];
+            }
         }
 
         private void ExportButton_Click(object sender, RoutedEventArgs e)
@@ -149,6 +180,8 @@ namespace Skaner
                 sb.AppendLine();
             }
             SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.DefaultExt = "txt";
+            saveFileDialog.FileName = "DANE_"+this.DateToFilter.SelectedDate.Value.ToString("ddMMyyyy");
             if (saveFileDialog.ShowDialog() == true)
                 File.WriteAllText(saveFileDialog.FileName, sb.ToString());
 
